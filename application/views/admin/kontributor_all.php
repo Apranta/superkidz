@@ -11,8 +11,8 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Data  Kontributor                                                                                         
-                            
+                            Data  Kontributor
+
                                                     </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -47,12 +47,10 @@
                                         <?php endforeach; ?>
                                         <td align="center">
 
-                                                                                <a href="<?= base_url('admin/detail_kontributor/'.$row['username']) ?>" class="btn btn-info waves-effect"><i class="fa fa-eye"></i></a>
-                                        
-                                                                                <button class="btn btn-info waves-effect" data-toggle="modal" data-target="#edit" onclick="get_kontributor(<?= $row['username'] ?>)"><i class="fa fa-edit"></i></button>
-                                        
-                                                                                <button class="btn btn-danger waves-effect" onclick="delete_kontributor(<?= $row['username'] ?>)"><i class="glyphicon glyphicon-trash"></i></button>
-                                        
+                                            <a href="<?= base_url('admin/detail_kontributor/'.$row['username']) ?>" class="btn btn-info waves-effect"><i class="fa fa-eye"></i></a>
+                                            <button class="btn btn-info waves-effect" data-toggle="modal" data-target="#edit" onclick="get_kontributor('<?= $row['username'] ?>')"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-danger waves-effect" onclick="delete_kontributor('<?= $row['username'] ?>')"><i class="glyphicon glyphicon-trash"></i></button>
+
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -68,8 +66,8 @@
             </div>
             <!-- /.row -->
 
-            
-        
+
+
         <!-- Add -->
         <div class="modal fade" tabindex="-1" role="dialog" id="add">
           <div class="modal-dialog" role="document">
@@ -90,7 +88,16 @@
                                       <input type="text" id="<?= $column ?>" name="<?= $column ?>" class="form-control" placeholder="YYYY-MM-DD" required>
                                 </div>
                             </div>
-                        </div>    
+                        </div>
+                        <?php elseif($column == 'id_gender') : ?>
+                        <div class="form-group">
+                            <label><?= ucwords(str_replace('_', ' ', $column)) ?></label>
+                            <select id="<?= $column ?>" name="<?= $column ?>" class="form-control" required>
+                                <?php foreach ($this->Gender_m->get() as $key): ?>
+                                    <option value="<?= $key->id_gender ?>"><?= $key->nama ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
                         <?php else : ?>
                         <div class="form-group">
                             <div class="form-line">
@@ -110,7 +117,7 @@
         </div><!-- /.modal -->
         <!--/End Add -->
 
-        
+
                 <!-- Edit -->
         <div class="modal fade" tabindex="-1" role="dialog" id="edit">
           <div class="modal-dialog" role="document">
@@ -123,14 +130,35 @@
               <div class="modal-body">
                     <input type="hidden" name="edit_username" id="edit_username">
                     <?php foreach ($columns as $column): ?>
+                      <?php if ($column == 'tanggal_lahir'): ?>
+                      <div class="form-group">
+                          <div class="form-line">
+                              <label class="form-label"><?= ucwords(str_replace('_', ' ', $column)) ?></label>
+                              <div class="input-group date">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                    <input type="text" id="edit_<?= $column ?>" name="<?= $column ?>" class="form-control" placeholder="YYYY-MM-DD" required>
+                              </div>
+                          </div>
+                      </div>
+                      <?php elseif($column == 'id_gender') : ?>
+                      <div class="form-group">
+                          <label><?= ucwords(str_replace('_', ' ', $column)) ?></label>
+                          <select id="<?= $column ?>" name="<?= $column ?>" class="form-control" required>
+                              <?php foreach ($this->Gender_m->get() as $key): ?>
+                                  <option value="<?= $key->id_gender ?>"><?= $key->nama ?></option>
+                              <?php endforeach ?>
+                          </select>
+                      </div>
+                      <?php else: ?>
                         <div class="form-group form-float">
                             <div class="form-line focused">
-                                <input type="text" id="edit_<?= $column ?>" name="<?= $column ?>" class="form-control">
                                 <label class="form-label"><?= ucwords(str_replace('_', ' ', $column)) ?></label>
+                                <input type="text" id="edit_<?= $column ?>" name="<?= $column ?>" class="form-control">
                             </div>
                         </div>
+                      <?php endif; ?>
                     <?php endforeach; ?>
-                    
+
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
@@ -138,9 +166,9 @@
               </div>
               <?= form_close() ?>            </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->  
+        </div><!-- /.modal -->
         <!--/End Edit -->
-                
+
     </div>
 </section>
 
@@ -151,7 +179,7 @@
             });
             $('.input-group.date').datepicker({format: "yyyy-mm-dd"});
         });
-        
+
         function get_kontributor(username) {
             $.ajax({
                 url: "<?= base_url('admin/kontributor') ?>",
@@ -165,13 +193,13 @@
                     <?php foreach ($columns as $column): ?>
                     $('#edit_<?= $column ?>').val(response.<?= $column ?>);
                     <?php endforeach; ?>
-                    <?php if (in_array("username", $columns)): ?>                    
+                    <?php if (in_array("username", $columns)): ?>
                     $('input[class="form-control"][name="username"]').val(response.username);
                     <?php endif; ?>                }
             });
         }
-        
-        
+
+
         function delete_kontributor(username) {
             $.ajax({
                 url: "<?= base_url('admin/kontributor') ?>",
@@ -183,6 +211,6 @@
                 success: function() {
                     window.location = "<?= base_url('admin/kontributor') ?>";
                 }
-            });   
+            });
         }
         </script>

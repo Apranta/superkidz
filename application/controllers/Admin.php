@@ -44,13 +44,13 @@ class Admin extends MY_Controller
 			redirect('admin/relawan');
 			exit;
 		}
-		
+
 		if ($this->POST('delete') && $this->POST('username'))
 		{
 			$this->Relawan_m->delete($this->POST('username'));
 			exit;
 		}
-				
+
 		if ($this->POST('edit') && $this->POST('edit_username'))
 		{
 			$this->data['entry'] = [
@@ -75,7 +75,7 @@ class Admin extends MY_Controller
 			echo json_encode($this->data['relawan']);
 			exit;
 		}
-				
+
 		$this->data['data']		= $this->Relawan_m->get();
 		$this->data['columns']	= ["username","nama","tempat_lahir","tanggal_lahir","alamat","id_gender","pekerjaan","email","telepon",];
 		$this->data['columnsa']	= ["username","nama","alamat","id_gender","email",];
@@ -116,17 +116,18 @@ class Admin extends MY_Controller
 				"telepon" => $this->POST("telepon"),
 				"id_gender" => $this->POST("id_gender"),
 			];
+			$this->User_m->insert(['username' => $this->POST("username"),'id_role'=> 2,'password' => md5('123456')]);
 			$this->Kontributor_m->insert($this->data['entry']);
 			redirect('admin/kontributor');
 			exit;
 		}
-		
+
 		if ($this->POST('delete') && $this->POST('username'))
 		{
 			$this->Kontributor_m->delete($this->POST('username'));
 			exit;
 		}
-				
+
 		if ($this->POST('edit') && $this->POST('edit_username'))
 		{
 			$this->data['entry'] = [
@@ -151,7 +152,7 @@ class Admin extends MY_Controller
 			echo json_encode($this->data['kontributor']);
 			exit;
 		}
-				
+
 		$this->data['data']		= $this->Kontributor_m->get();
 		$this->data['columns']	= ["username","nama","tempat_lahir","tanggal_lahir","alamat","pekerjaan","email","telepon","id_gender",];
 		$this->data['columnsa']	= ["username","nama","pekerjaan","email","telepon","id_gender",];
