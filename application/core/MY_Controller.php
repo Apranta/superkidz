@@ -14,9 +14,12 @@ class MY_Controller extends CI_Controller
 		if ($temp == 'admin') {
 			return $this->load->view('admin/template/layout', $data);
 		}
-    elseif ($temp == 'kontributor') {
-      return $this->load->view('kontributor/template/layout', $data);
-    }
+		elseif ($temp == 'kontributor') {
+		return $this->load->view('kontributor/template/layout', $data);
+		}
+		elseif ($temp == 'relawan') {
+			return $this->load->view('relawan/template/layout', $data);
+		}
 		else
 	    	return $this->load->view('template/layout', $data);
 	}

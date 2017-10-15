@@ -51,4 +51,78 @@ class Kontributor extends MY_Controller
 		$this->data['title'] = 'Profil '.$this->title;
     $this->template($this->data,'kontributor');
   }
+
+	public function berita()
+	{
+		if ($this->POST('insert'))
+		{
+			$this->data['entry'] = [
+				"header" => $this->POST("header"),
+				"waktu" => date('Y-m-d h:m:s'),
+				"isi" => $this->POST("isi"),
+				"id_user" => $this->data['id_user'],
+				"id_kategori" => $this->POST("id_kategori"),
+			];
+			$this->Blog_m->insert($this->data['entry']);
+			redirect('kontributor/berita');
+			exit;
+		}
+
+		if ($this->POST('delete') && $this->POST('id_blog'))
+		{
+			$this->Blog_m->delete($this->POST('id_blog'));
+			exit;
+		}
+
+		if ($this->POST('edit') && $this->POST('id_blog'))
+		{
+			$this->data['entry'] = [
+				"header" => $this->POST("header"),
+				"isi" => $this->POST("isi"),
+				"id_kategori" => $this->POST("id_kategori"),
+			];
+			$this->Blog_m->update($this->POST('id_blog'), $this->data['entry']);
+			redirect('kontributor/berita');
+			exit;
+		}
+
+		if ($this->POST('get') && $this->POST('id_blog'))
+		{
+			$this->data['blog'] = $this->Blog_m->get_row(['id_blog' => $this->POST('id_blog')]);
+			echo json_encode($this->data['blog']);
+			exit;
+		}
+
+		$this->data['data']		= $this->Blog_m->get(['id_user' => $this->data['profil']->username]);
+		$this->data['columns']	= ["id_blog","id_kategori","id_user","waktu","header"];
+		$this->data['title'] 	= 'Daftar Berita';
+		$this->data['content'] 	= 'kontributor/blog_all';
+		$this->template($this->data,'kontributor');
+	}
+
+	public function add_berita()
+	{
+		$this->data['kategori'] = $this->Kategori_blog_m->get();
+		$this->data['title'] 	= 'Tambah Berita';
+		$this->data['content'] 	= 'kontributor/add-berita';
+		$this->template($this->data,'kontributor');
+	}
+
+	public function edit_berita()
+	{
+		$idBlog = $this->uri->segment(3);
+		if (!isset($idBlog)) {
+			redirect('kontributor/berita');
+			exit;
+		}
+		$this->data['berita'] = $this->Blog_m->get_row(['id_blog' => $idBlog]);
+		if (!isset($this->data['berita'])) {
+			redirect('kontributor/berita');
+			exit;
+		}
+		$this->data['kategori'] = $this->Kategori_blog_m->get();
+		$this->data['title'] 	= 'Edit Berita';
+		$this->data['content'] 	= 'kontributor/edit-berita';
+		$this->template($this->data,'kontributor');
+	}
 }

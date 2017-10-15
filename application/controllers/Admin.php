@@ -8,7 +8,7 @@ class Admin extends MY_Controller
 		parent::__construct();
 		$this->data['id_role'] = $this->session->userdata('id_role');
 		$this->data['id_user'] = $this->session->userdata('username');
-		if (!isset($this->data['id_role']))
+		if (!isset($this->data['id_role'])  || $this->data['id_role'] != 1)
 		{
 			redirect('logout');
 			exit;
