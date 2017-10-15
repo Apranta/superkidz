@@ -6,6 +6,7 @@ class Admin extends MY_Controller
 	{
 		parent::__construct();
 		$this->data['id_role'] = $this->session->userdata('id_role');
+		$this->data['id_user'] = $this->session->userdata('username');
 		if (!isset($this->data['id_role']))
 		{
 			redirect('logout');
@@ -13,8 +14,10 @@ class Admin extends MY_Controller
 		}
 		$this->load->model('Relawan_m');
 		$this->load->model('User_m');
+		$this->load->model('Blog_m');
 		$this->load->model('Gender_m');
 		$this->load->model('Kontributor_m');
+		$this->load->model('Kategori_blog_m');
 	}
 
 	public function index()
@@ -175,6 +178,121 @@ class Admin extends MY_Controller
 		$this->data['data'] = $this->Kontributor_m->get_row(['username' => $this->data['username']]);
 		$this->data['title'] 	= 'Detail Kontributor';
 		$this->data['content'] 	= 'admin/kontributor_detail';
+		$this->template($this->data,'admin');
+	}
+
+	public function kategori()
+	{
+		if ($this->POST('insert'))
+		{
+			$this->data['entry'] = [
+				"nama" => $this->POST("nama"),
+			];
+			$this->Kategori_blog_m->insert($this->data['entry']);
+			redirect('admin/kategori');
+			exit;
+		}
+
+		if ($this->POST('delete') && $this->POST('id_kategori'))
+		{
+			$this->Kategori_blog_m->delete($this->POST('id_kategori'));
+			exit;
+		}
+
+		if ($this->POST('edit') && $this->POST('id_kategori'))
+		{
+			$this->data['entry'] = [
+				"nama" => $this->POST("nama"),
+			];
+			$this->Kategori_blog_m->update($this->POST('id_kategori'), $this->data['entry']);
+			redirect('admin/kategori');
+			exit;
+		}
+
+		if ($this->POST('get') && $this->POST('id_kategori'))
+		{
+			$this->data['kategori'] = $this->Kategori_blog_m->get_row(['id_kategori' => $this->POST('id_kategori')]);
+			echo json_encode($this->data['kategori']);
+			exit;
+		}
+
+		$this->data['data']		= $this->Kategori_blog_m->get();
+		$this->data['columns']	= ["id_kategori","nama"];
+		$this->data['title'] 	= 'Daftar Kategori';
+		$this->data['content'] 	= 'admin/kategori_all';
+		$this->template($this->data,'admin');
+	}
+	public function berita()
+	{
+		if ($this->POST('insert'))
+		{
+			$this->data['entry'] = [
+				"header" => $this->POST("header"),
+				"waktu" => date('Y-m-d h:m:s'),
+				"isi" => $this->POST("isi"),
+				"id_user" => $this->data['id_user'],
+				"id_kategori" => $this->POST("id_kategori"),
+			];
+			$this->Blog_m->insert($this->data['entry']);
+			redirect('admin/berita');
+			exit;
+		}
+
+		if ($this->POST('delete') && $this->POST('id_blog'))
+		{
+			$this->Blog_m->delete($this->POST('id_blog'));
+			exit;
+		}
+
+		if ($this->POST('edit') && $this->POST('id_blog'))
+		{
+			$this->data['entry'] = [
+				"header" => $this->POST("header"),
+				"isi" => $this->POST("isi"),
+				"id_kategori" => $this->POST("id_kategori"),
+			];
+			$this->Blog_m->update($this->POST('id_blog'), $this->data['entry']);
+			redirect('admin/berita');
+			exit;
+		}
+
+		if ($this->POST('get') && $this->POST('id_blog'))
+		{
+			$this->data['blog'] = $this->Blog_m->get_row(['id_blog' => $this->POST('id_blog')]);
+			echo json_encode($this->data['blog']);
+			exit;
+		}
+
+		$this->data['data']		= $this->Blog_m->get();
+		$this->data['columns']	= ["id_blog","id_kategori","id_user","waktu","header"];
+		$this->data['title'] 	= 'Daftar Berita';
+		$this->data['content'] 	= 'admin/blog_all';
+		$this->template($this->data,'admin');
+	}
+
+	public function add_berita()
+	{
+		$this->data['kategori'] = $this->Kategori_blog_m->get();
+		$this->data['title'] 	= 'Tambah Berita';
+		$this->data['content'] 	= 'admin/add-berita';
+		$this->template($this->data,'admin');
+	}
+
+	public function edit_berita()
+	{
+		$idBlog = $this->uri->segment(3);
+		if (!isset($idBlog)) {
+			redirect('admin/berita');
+			exit;
+		}
+		$this->data['berita'] = $this->Blog_m->get_row(['id_blog' => $idBlog]);
+		if (!isset($this->data['berita'])) {
+			redirect('admin/berita');
+			exit;
+		}
+		$this->data['kategori'] = $this->Kategori_blog_m->get();
+		$this->data['title'] 	= 'Edit Berita';
+		$this->data['content'] 	= 'admin/edit-berita';
 		$this->template($this->data,'admin');
 	}
 }
