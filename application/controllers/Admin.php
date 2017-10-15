@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin extends MY_Controller
 {
@@ -24,7 +25,7 @@ class Admin extends MY_Controller
 	{
 		$this->data['content'] 	= 'tes';
 		$this->data['title'] = 'Dashboard Admin '.$this->title;
-        $this->template($this->data,'admin');
+    $this->template($this->data,'admin');
 	}
 
 	public function relawan()
@@ -119,7 +120,7 @@ class Admin extends MY_Controller
 				"telepon" => $this->POST("telepon"),
 				"id_gender" => $this->POST("id_gender"),
 			];
-			$this->User_m->insert(['username' => $this->POST("username"),'id_role'=> 2,'password' => md5('123456')]);
+			$this->User_m->insert(['username' => $this->POST("username"),'id_role'=> 3,'password' => md5('123456')]);
 			$this->Kontributor_m->insert($this->data['entry']);
 			redirect('admin/kontributor');
 			exit;

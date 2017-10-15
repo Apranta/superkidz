@@ -14,6 +14,9 @@ class MY_Controller extends CI_Controller
 		if ($temp == 'admin') {
 			return $this->load->view('admin/template/layout', $data);
 		}
+    elseif ($temp == 'kontributor') {
+      return $this->load->view('kontributor/template/layout', $data);
+    }
 		else
 	    	return $this->load->view('template/layout', $data);
 	}
@@ -55,11 +58,11 @@ class MY_Controller extends CI_Controller
 
 	public function import($tag_name = 'userfile')
 	{
-		$config = [ 
+		$config = [
 			'file_name'		=> 'temp.xlsx',
 			'allowed_types' => 'xls|xlsx',
-			'upload_path'	=> realpath(APPPATH . '../assets/excel/') 
-		];                                      
+			'upload_path'	=> realpath(APPPATH . '../assets/excel/')
+		];
 		$this->load->library('upload', $config);
 		$this->upload->do_upload($tag_name);
 	}
